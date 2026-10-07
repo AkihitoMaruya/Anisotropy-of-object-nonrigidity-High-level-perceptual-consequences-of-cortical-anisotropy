@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+._*
+
+# Python
+__pycache__/
+*.pyc
+
+# empty scratch folders made by the revision scripts
+Images/
+Toolbox/Data/work/me_tmp/

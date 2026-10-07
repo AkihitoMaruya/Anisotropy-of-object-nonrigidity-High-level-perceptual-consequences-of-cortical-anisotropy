@@ -5,10 +5,10 @@ Figure 5. Optic flows from isotropic and anisotropic cortex (revised model, Tool
 A, B: direction tuning of the motion-energy units (grating drifting at 0.58 px/frame), times the cell number
       (A anisotropic: cat widths x2.5 and cat numbers; B isotropic: mean width and number). Colour = preferred direction.
 C: optic flow on the rotating ring at 45 deg phase (columns horizontal / vertical rotation; rows isotropic / anisotropic),
-   colour = direction; the flow over the cycle is figures_paper/videos/Fig5C.mp4.
-D, E: the original Figure 5D and 5E videos (snapshots; figures_paper/videos/Fig5D.mp4, Fig5E.mp4).
+   colour = direction; the flow over the cycle is in figures_paper/videos/Fig5.mp4.
+D, E: the original Figure 5D and 5E videos (snapshots). C-E are combined into one video, figures_paper/videos/Fig5.mp4.
 F, G: cosine similarity between the flow and rotation-to-wobble template directions against k (mean +- SD/2), best k.
-Output: figures_paper/Fig5.pdf; videos/Fig5C-E.mp4.
+Output: figures_paper/Fig5.pdf; videos/Fig5.mp4.
 """
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Toolbox'))
@@ -108,12 +108,14 @@ if __name__ == '__main__':
     axG = fig.add_axes([.6, y(242), .35, hh(26)]); draw_cos(axG, 'A'); fs.letter(axG, 'G', x=-.28)
     fs.save(fig, 'Fig5')
     if '--no-video' in sys.argv: sys.exit()
-    # Fig 5C video: the flow over the fitted part of the cycle
-    w = imageio.get_writer(os.path.join(fs.VOUT, 'Fig5C.mp4'), fps=10, codec='libx264', quality=8, macro_block_size=1)
-    fv = fs.plt.figure(figsize=(7.0, 3.4), dpi=150)                   # even pixel size (1050 x 510) for the encoder
+    # one video for the figure: C (the flow over the fitted part of the cycle, 10 frames/s), D and E (original videos),
+    # in the figure's layout; each plays at its own speed and the shorter ones loop
+    fv = fs.plt.figure(figsize=(7.0, 3.4), dpi=150); C = []            # 1050 x 510 px
     for fi in range(M.P.FIT.start, M.P.FIT.stop):
         fv.clf(); flow_grid(fv, [.0, .03, .86, .94], fi); draw_key(fv.add_axes([.86, .38, .14, .24]))
-        fv.canvas.draw(); w.append_data(np.asarray(fv.canvas.buffer_rgba())[..., :3])
-    w.close(); print('saved', os.path.join(fs.VOUT, 'Fig5C.mp4'))
-    for v in ('Fig5D.mp4', 'Fig5E.mp4'):
-        fs.copy_video(os.path.join(fs.VIDEOS, v), v)
+        fv.canvas.draw(); C.append(np.asarray(fv.canvas.buffer_rgba())[..., :3].copy())
+    fs.plt.close(fv)
+    fs.combine_videos([dict(src=C, fps=10, box=(40, 10, 824, 400), label='C'),
+                       dict(src=os.path.join(fs.VIDEOS, 'Fig5D.mp4'), box=(910, 10, 400, 400), label='D'),
+                       dict(src=os.path.join(fs.VIDEOS, 'Fig5E.mp4'), box=(40, 440, 1270, 508), label='E')],
+                      'Fig5.mp4', size=(1330, 960))

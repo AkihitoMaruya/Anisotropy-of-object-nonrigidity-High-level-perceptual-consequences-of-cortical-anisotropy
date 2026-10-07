@@ -7,7 +7,7 @@ All paths are relative to this folder, so it runs from any location (local copy,
 
 ```bash
 pip install -r requirements.txt
-python run_all.py              # all figures (Fig 1-6, Fig S1-S5)
+python run_all.py              # all figures (Fig 1-6, Fig S1-S7)
 python run_all.py Fig5 FigS7   # selected figures
 ```
 
@@ -23,15 +23,15 @@ On Google Colab, after mounting Drive:
 
 | Script | Output (in `figures_paper/`; videos in `figures_paper/videos/`) |
 |---|---|
-| `Fig1.py` | `Fig1.pdf`, videos `Fig1A-H.mp4` (rotating rings) |
+| `Fig1.py` | `Fig1.pdf`, video `Fig1.mp4` (rotating rings, A-H in one video) |
 | `Fig2.py` | `Fig2` (shape anisotropy) |
 | `Fig3.py` | `Fig3` (cortical anisotropy: tuning, decoded angles) |
-| `Fig4.py` | `Fig4`, video `Fig4A.mp4` (image vs physical stretch, psychophysics) |
-| `Fig5.py` | `Fig5`, videos `Fig5C-E.mp4` (optic flow of isotropic / anisotropic cortex, template matching) |
+| `Fig4.py` | `Fig4`, video `Fig4.mp4` (image vs physical stretch, psychophysics) |
+| `Fig5.py` | `Fig5`, video `Fig5.mp4` (C-E in one video; optic flow of isotropic / anisotropic cortex, template matching) |
 | `Fig6.py` | `Fig6` (differential invariants, Def/Curl fits, stretch) |
 | `FigS1.py`, `FigS2.py` | individual observers (shape matches, nonrigidity judgements) |
 | `FigS3.py` | intuition: tuning and ring energy per unit (A-D), Heeger cost at one ring point (E, F), best k vs width / number anisotropy (G, H) |
-| `FigS3_filters_interactive.py` | `FigS3_filters.html`: 3-D view of all filters, adjustable width anisotropy, optional ring-video spectrum |
+| `FigS3_filters_interactive.py` | `FigS3_filters.html`: 3-D view of all filters, adjustable width and number anisotropy, ring-video spectrum, energy per direction and velocity estimate at one ring point |
 | `FigS4.py` | orientation energy of the rim (dynamic random dots), vertical and horizontal rotation, video `FigS4.mp4` (rows A-D together) |
 | `FigS4_interactive.py` | `FigS4_matching_task.html`: interactive task, one texture knob for each rotation (videos embedded) |
 | `FigS5.py` | the shape of the object does not change Def / Curl: Div, Curl, Def (contour integrals) and Def / Curl for a circle, ellipse, octagon, star and random outline |

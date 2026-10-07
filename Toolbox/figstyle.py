@@ -121,6 +121,59 @@ def play_badge(fig, ax, size_mm=5):
     a = fig.add_axes([p.x1-w*1.1, p.y0+h*.1, w, h]); a.imshow(imageio.imread(os.path.join(VIDEOS, 'playmark.png'))); a.axis('off')
 
 
+def combine_videos(tiles, name, size, fps=30, duration=None):
+    """One video from several, each in its own box, playing at its own speed; shorter ones loop.
+    tiles: list of dict(src=path to an mp4 or a list of frames, fps=frames per second of a frame list,
+    box=(x, y, w, h) in pixels, label=panel letter or ''). size = (W, H) of the output (even numbers).
+    duration: seconds (default: the longest tile). Saved in figures_paper/videos/."""
+    import imageio.v2 as imageio
+    from PIL import Image, ImageDraw, ImageFont
+
+    class Source:
+        def __init__(self, t):
+            self.t, self.frames = t, t['src'] if not isinstance(t['src'], str) else None
+            if self.frames is None:
+                r = imageio.get_reader(t['src']); m = r.get_meta_data()
+                self.fps, self.n = m['fps'], r.count_frames(); r.close()
+            else:
+                self.fps, self.n = t['fps'], len(self.frames)
+            self.reader, self.pos, self.cur = None, -1, None
+
+        def get(self, sec):                                          # frame shown at time sec (looping)
+            i = int(sec*self.fps) % self.n
+            if self.frames is not None:
+                return self.frames[i]
+            if self.reader is None or i < self.pos:                  # (re)start reading from the beginning
+                if self.reader is not None:
+                    self.reader.close()
+                self.reader, self.pos = imageio.get_reader(self.t['src']), -1
+                self.it = self.reader.iter_data()
+            while self.pos < i:
+                self.cur = next(self.it); self.pos += 1
+            return self.cur
+
+    S = [Source(t) for t in tiles]
+    T = duration or max(s.n/s.fps for s in S)
+    try:
+        font = ImageFont.truetype('Arial Bold.ttf', 30)
+    except OSError:
+        try:
+            font = ImageFont.truetype('/System/Library/Fonts/Supplemental/Arial Bold.ttf', 30)
+        except OSError:
+            font = ImageFont.load_default(size=30)
+    w = imageio.get_writer(os.path.join(VOUT, name), fps=fps, codec='libx264', quality=7, macro_block_size=1)
+    for k in range(int(round(T*fps))):
+        canvas = Image.new('RGB', size, 'white'); d = ImageDraw.Draw(canvas)
+        for s in S:
+            x, y, bw, bh = s.t['box']
+            im = Image.fromarray(np.asarray(s.get(k/fps))[..., :3]).resize((bw, bh), Image.LANCZOS)
+            canvas.paste(im, (x, y))
+            if s.t.get('label'):
+                d.text((x-34 if x >= 34 else x+4, y), s.t['label'], fill='black', font=font)
+        w.append_data(np.asarray(canvas))
+    w.close(); print('saved', os.path.join(VOUT, name))
+
+
 def copy_video(src, name):
     """Copy a video into figures_paper/videos/ under the figure's name (e.g. 'Fig1C.mp4')."""
     import shutil

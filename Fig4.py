@@ -4,12 +4,12 @@
 Figure 4. Effect of image and physical stretch on perceived nonrigidity.
 A: rings stretched horizontally in the image (rows 1, 3) or physically before projection (rows 2, 4), from 0% to 50%
    (geometry of the experiment's stimuli, as in the original Figure4_A.py; first frame). The experiment's video:
-   figures_paper/videos/Fig4A.mp4.
+   figures_paper/videos/Fig4.mp4.
 B, C: histograms of the horizontal stretch (image: red; physical: blue) chosen to match the shapes, when the
    horizontally (B) or vertically (C) rotating rings were the test shape.
 D: proportion of trials on which the vertically rotating rings were judged more nonrigid (mean +- s.e. of bootstrap
    means; * p < .05, one-sample t-test against 0.5), conditions as in the original Figure4_B-D.py.
-Data: Toolbox/Data/experiment/. Output: figures_paper/Fig4.pdf; videos/Fig4A.mp4.
+Data: Toolbox/Data/experiment/. Output: figures_paper/Fig4.pdf; videos/Fig4.mp4.
 """
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'Toolbox'))
@@ -97,6 +97,6 @@ for i, k in enumerate(labels):
 ax.axhline(.5, color='0.5', lw=.8, ls=':')
 ax.set(xticks=range(6), xticklabels=labels, yticks=[0, .5, 1], ylim=[0, 1.1], ylabel='Proportion vertical\nmore nonrigid')
 fs.letter(ax, 'D', x=-.2)
-fs.copy_video(os.path.join(fs.VIDEOS, 'Fig4A.mp4'), 'Fig4A.mp4')
+fs.copy_video(os.path.join(fs.VIDEOS, 'Fig4A.mp4'), 'Fig4.mp4')
 fs.save(fig, 'Fig4')
 print({k: round(v, 3) for k, v in zip(labels, m)}, {k: f'{v:.2g}' for k, v in p.items()})
